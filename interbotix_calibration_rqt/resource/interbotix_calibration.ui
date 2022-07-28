@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CalibrationUI</class>
+ <widget class="QWidget" name="CalibrationUI">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>614</width>
+    <height>573</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Calibration UI</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="4" column="2">
+    <widget class="QPushButton" name="upButton">
+     <property name="text">
+      <string>Up</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="3">
+    <widget class="QPushButton" name="sleepButton">
+     <property name="text">
+      <string>Sleep</string>
+     </property>
+    </widget>
+   </item>
+   <item row="22" column="0">
+    <widget class="QPushButton" name="enableButton">
+     <property name="text">
+      <string>Enable</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0" rowspan="6" colspan="4">
+    <widget class="QPushButton" name="stopButton">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset theme="stop">
+       <normaloff>.</normaloff>.</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>256</width>
+       <height>256</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QPushButton" name="homeButton">
+     <property name="text">
+      <string>Home</string>
+     </property>
+    </widget>
+   </item>
+   <item row="20" column="0">
+    <widget class="QPushButton" name="openButton">
+     <property name="text">
+      <string>Open</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="4">
+    <widget class="QLabel" name="calibrationLabel">
+     <property name="text">
+      <string>Calibration</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QPushButton" name="saveButton">
+     <property name="text">
+      <string>Save Calibration</string>
+     </property>
+    </widget>
+   </item>
+   <item row="20" column="1">
+    <widget class="QPushButton" name="closeButton">
+     <property name="text">
+      <string>Close</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QPushButton" name="calibrateButton">
+     <property name="text">
+      <string>Go to calibration pose</string>
+     </property>
+    </widget>
+   </item>
+   <item row="22" column="1">
+    <widget class="QPushButton" name="disableButton">
+     <property name="text">
+      <string>Disable</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Emergency Stop</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="4">
+    <widget class="QLabel" name="manipulatorLabel">
+     <property name="text">
+      <string>Command Manipulator</string>
+     </property>
+    </widget>
+   </item>
+   <item row="21" column="0" colspan="4">
+    <widget class="QLabel" name="torqueLabel">
+     <property name="text">
+      <string>Command Torque (ONLY PRESS DISABLE WHEN HOLDING THE ROBOT)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="19" column="0" colspan="4">
+    <widget class="QLabel" name="gripperLabel">
+     <property name="text">
+      <string>Command Gripper</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QPushButton" name="uprightButton">
+     <property name="text">
+      <string>Upright</string>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="0">
+    <widget class="QPushButton" name="releaseButton">
+     <property name="text">
+      <string>Release</string>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Release after Stop</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QPushButton" name="calculateButton">
+     <property name="text">
+      <string>Calculate  Transformation</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

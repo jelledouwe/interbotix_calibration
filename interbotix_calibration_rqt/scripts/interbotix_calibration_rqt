@@ -1,0 +1,10 @@
+#!/usr/bin/env python3
+
+import sys
+import interbotix_calibration_rqt
+from interbotix_calibration_rqt.interbotix_calibration_rqt import EagerxCalibrationRqt
+from rqt_gui.main import Main
+
+plugin = 'interbotix_calibration_rqt'
+main = Main(filename=plugin)
+sys.exit(main.main(standalone=plugin))

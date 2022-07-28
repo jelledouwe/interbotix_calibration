@@ -1,0 +1,232 @@
+<?xml version="1.0"?>
+
+<launch>
+  <!-- Sim or Real -->
+  <arg name="robot_sim"                         default="false"/>
+  <arg name="camera_sim"                        default="false"/>
+
+  <!-- Robot arguments -->
+  <!-- <arg name="robot_model"                       default="px150"/>
+  <arg name="dof"                               default="5"/>
+  <arg name="joint_names"                       default="[waist, shoulder, elbow, wrist_angle, wrist_rotate]"/> -->
+
+  <!-- For viper choose: -->
+  <arg name="robot_model"                       default="vx300s"/>
+  <arg name="dof"                               default="6"/>
+  <arg name="joint_names"                       default="[waist, shoulder, elbow, forearm_roll, wrist_angle, wrist_rotate]"/>
+
+  <arg name="robot_name"                        default="$(arg robot_model)"/>
+  <arg name="move_group_namespace"              default="/$(arg robot_name)"/>
+  <arg name="move_group"                        default="interbotix_arm"/>
+  <arg name="end_effector_group_name"           default="interbotix_gripper"/>
+  <arg name="robot_base_frame"                  default="$(arg robot_name)/base_link"/>
+  <arg name="robot_effector_frame"              default="$(arg robot_name)/ee_arm_link"/>
+
+  <!-- Camera arguments -->
+  <arg name="use_realsense"                     default="false"/>
+  <arg name="image_is_rectified"                default="true"/>
+  <arg name="reference_frame"                   default="camera_color_optical_frame"/>
+  <arg name="camera_frame"                      default="camera_color_optical_frame"/>
+  <arg name="camera_info_topic"                 default="/camera/color/camera_info"/>
+  <arg name="camera_image_topic"                default="/camera/color/image_raw"/>
+  <arg name="camera_description"                default="webcam.urdf.xacro" doc="Name of urdf file, should be located in interbotix_calibration/config"/>
+  <!-- For realsense choose:
+  <arg name="camera_description"                default="realsense_d435.urdf.xacro"/>
+or
+  <arg name="camera_description"                default="realsense_l515.urdf.xacro" doc="Name of urdf file, should be located in interbotix_calibration/config"/>
+-->
+
+  <arg name="tracking_base_frame"               default="$(arg reference_frame)"/>
+  <arg name="image_width"                       default="1280"/>
+  <arg name="image_height"                      default="720"/>
+  <arg name="image_rate"                        default="30"/>
+  <!-- camera sim arguments, not used when using real camera -->
+  <arg name="camera_configuration"              doc="Specifies the location of the camera in simulation" default="-x 0.8 -z 0.3 -Y 3.14" />
+  <!-- webcam arguments, not used when using realsense -->
+  <arg name="video_device"                      default="/dev/video2"/>
+  <arg name="camera_name"                       default="webcam"/>
+  <arg name="camera_info_url"                   default="" doc="Path to camera calibration yaml file (e.g. package://interbotix_calibration/config/camera_info.yaml"/>
+
+  <!-- moveit arguments -->
+  <arg name="use_moveit_rviz"                   default="true"/>
+  <arg name="rviz_frame"                        default="world"/>
+  <arg name="collision_height"                  default="0.02" doc="Specifies the height with respect to the base where the robot is assumed to be in collision."/>
+  <arg name="base_length"                       default="0.4" doc="Specifies the length around the base that is not considered as collision object. "/>
+  <arg name="workspace_length"                  default="2.4" doc="Specifies the size of the collision object."/>
+
+  <!-- Aruco arguments -->
+  <arg name="marker_size"                       doc="Size of the ArUco marker used, in meters" default="0.04"/>
+  <arg name="marker_id"                         doc="The ID of the ArUco marker used" default="26"/>
+  <arg name="marker_frame"                      default="camera_marker" />
+
+  <!-- Calibration arguments -->
+  <arg name="namespace_prefix"                  default="hand_eye_calibration"/>
+  <arg name="start_rviz"                        default="false" />
+  <arg name="eye_on_hand"                       default="false"/>
+  <arg name="tracking_marker_frame"             default="marker_frame_filtered"/>
+  <arg name="freehand_robot_movement"           default="true" />
+  <arg name="robot_velocity_scaling"            default="0.2" />
+  <arg name="robot_acceleration_scaling"        default="0.2" />
+  <arg name="marker_transform_topic"            default="/aruco_tracker/transform"/>
+  <arg name="transform_filename"                default="eye_hand_calibration_2022-07-27-1457.yaml"/>
+
+
+  <!-- If camera_sim or robot_sim launch Gazebo -->
+  <group if="$(eval arg('robot_sim') or arg('camera_sim'))">
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+      <arg name="paused" value="true"/>
+    </include>
+  </group>
+
+  <!-- If robot_sim spawn robot in Gazebo -->
+  <group if="$(arg robot_sim)">
+    <env name="GAZEBO_RESOURCE_PATH"              value="$(find interbotix_xsarm_gazebo)"/>
+
+    <rosparam file="$(find interbotix_xsarm_gazebo)/config/trajectory_controllers/$(arg robot_model)_trajectory_controllers.yaml" command="load" ns="$(arg robot_name)"/>
+
+    <param name="$(arg robot_name)/robot_description" command="$(find xacro)/xacro '$(find interbotix_calibration)/urdf/robot.urdf.xacro'
+                                                               robot_name:=$(arg robot_name)
+                                                               add_marker:=true" />
+
+    <node
+      name="urdf_spawner"
+      pkg="gazebo_ros"
+      type="spawn_model"
+      respawn="false"
+      output="screen"
+      ns="$(arg robot_name)"
+      args="-urdf -model robot -z 0 -param robot_description"/>
+
+    <node
+      name="controller_spawner"
+      pkg="controller_manager"
+      type="controller_manager"
+      respawn="false"
+      output="screen"
+      ns="$(arg robot_name)"
+      args="spawn arm_controller gripper_controller joint_state_controller"/>
+
+    <node
+      name="robot_state_publisher"
+      pkg="robot_state_publisher"
+      type="robot_state_publisher"
+      ns="$(arg robot_name)">
+    </node>
+
+    <include file="$(find interbotix_xsarm_moveit)/launch/move_group.launch" ns="$(arg robot_name)">
+      <arg name="robot_model"                       value="$(arg robot_model)"/>
+      <arg name="robot_name"                        value="$(arg robot_name)"/>
+      <arg name="base_link_frame"                   value="base_link"/>
+      <arg name="dof"                               value="$(arg dof)"/>
+      <arg name="publish_monitored_planning_scene"  value="true" />
+    </include>
+  </group>
+
+  <!-- If camera_sim spawn camera in Gazebo -->
+  <group if="$(arg camera_sim)">
+    <!-- Spawn camera -->
+
+    <param name="robot_description"
+          command="$(find xacro)/xacro '$(find interbotix_calibration)/urdf/$(arg camera_description)' color_width:=$(arg image_width) color_height:=$(arg image_height) gazebo:=true"/>
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="state_publisher">
+      <param name="publish_frequency" type="double" value="30.0" />
+    </node>
+
+    <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
+    <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+      args="-urdf -param robot_description -model camera $(arg camera_configuration)"/>
+  </group>
+
+  <group unless="$(arg camera_sim)">
+    <!-- Spawn camera -->
+
+    <!-- launch realsense camera if using realsense -->
+    <group if="$(arg use_realsense)">
+      <!-- Robot state publisher -->
+      <include file="$(find realsense2_camera)/launch/rs_camera.launch">
+        <arg name="color_width"         value="$(arg image_width)"/>
+        <arg name="color_height"        value="$(arg image_height)"/>
+        <arg name="color_fps"           value="$(arg image_rate)"/>
+        <arg name="enable_depth"        value="False"/>
+        <arg name="enable_sync"         value="False"/>
+        <arg name="enable_infra1"       value="False"/>
+        <arg name="enable_infra2"       value="False"/>
+        <arg name="enable_pointcloud"   value="False"/>
+      </include>
+    </group>
+
+    <!-- launch webcam otherwise -->
+    <group unless="$(arg use_realsense)" ns="camera">
+      <node pkg="usb_cam" type="usb_cam_node" name="color">
+        <param name="video_device"      value="$(arg video_device)"/>
+        <param name="image_width"       value="$(arg image_width)"/>
+        <param name="image_height"      value="$(arg image_height)"/>
+        <param name="framerate"         value="$(arg image_rate)"/>
+        <param name="camera_info_url"   value="$(arg camera_info_url)"/>
+        <param name="camera_name"       value="$(arg camera_name)"/>
+        <param name="pixel_format"      value="yuyv"/>
+      </node>
+    </group>
+
+    <param name="robot_description" command="$(find xacro)/xacro '$(find interbotix_calibration)/urdf/$(arg camera_description)'"/>
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="state_publisher">
+      <param name="publish_frequency" type="double" value="30.0" />
+    </node>
+  </group>
+
+  <group unless="$(arg robot_sim)">
+    <!-- Spawn robot -->
+  	<include file="$(find interbotix_xsarm_ros_control)/launch/xsarm_ros_control.launch">
+      <arg name="robot_model" value="$(arg robot_model)"/>
+      <arg name="robot_name" value="$(arg robot_name)"/>
+      <arg name="dof" value="$(arg dof)"/>
+    </include>
+
+    <include file="$(find interbotix_xsarm_moveit)/launch/move_group.launch" ns="$(arg robot_name)">
+      <arg name="robot_model"                       value="$(arg robot_model)"/>
+      <arg name="robot_name"                        value="$(arg robot_name)"/>
+      <arg name="base_link_frame"                   value="base_link"/>
+      <arg name="dof"                               value="$(arg dof)"/>
+      <arg name="publish_monitored_planning_scene"  value="true" />
+    </include>
+  </group>
+
+  <include if="$(arg use_moveit_rviz)" file="$(find interbotix_xsarm_moveit)/launch/moveit_rviz.launch" ns="$(arg robot_name)">
+    <arg name="rviz_frame"                        value="$(arg rviz_frame)"/>
+    <arg name="config"                            value="true"/>
+  </include>
+
+  <node name="interbotix_calibration" pkg="interbotix_calibration" type="interbotix_calibration_node.py" ns="$(arg robot_name)" output="screen">
+    <param name="robot_sim"                   value="$(arg robot_sim)"/>
+    <param name="robot_base_frame"            value="$(arg robot_base_frame)"/>
+    <param name="joint_names"                 value="$(arg joint_names)"/>
+    <param name="manipulator_group_name"      value="$(arg move_group)"/>
+    <param name="end_effector_group_name"     value="$(arg end_effector_group_name)"/>
+    <param name="collision_height"            value="$(arg collision_height)"/>
+    <param name="base_length"                 value="$(arg base_length)"/>
+    <param name="workspace_length"            value="$(arg workspace_length)"/>
+    <param name="namespace_prefix"            value="$(arg namespace_prefix)"/>
+    <param name="tracking_marker_frame"       value="$(arg tracking_marker_frame)"/>
+    <param name="camera_frame"                value="$(arg camera_frame)"/>
+    <param name="marker_transform_topic"      value="$(arg marker_transform_topic)"/>
+    <param name="robot_effector_frame"        value="$(arg robot_effector_frame)"/>
+    <param name="transform_filename"          value="$(arg transform_filename)"/>
+  </node>
+
+  <!-- start ArUco -->
+  <node name="aruco_tracker" pkg="aruco_ros" type="single">
+    <remap from="/camera_info"              to="$(arg camera_info_topic)" />
+    <remap from="/image"                    to="$(arg camera_image_topic)" />
+    <param name="image_is_rectified"        value="$(arg image_is_rectified)"/>
+    <param name="marker_size"               value="$(arg marker_size)"/>
+    <param name="marker_id"                 value="$(arg marker_id)"/>
+    <param name="reference_frame"           value="$(arg reference_frame)"/>
+    <param name="camera_frame"              value="$(arg camera_frame)"/>
+    <param name="marker_frame"              value="$(arg marker_frame)" />
+  </node>
+
+  # Start GUI
+  <node pkg="interbotix_calibration_rqt" name="interbotix_calibration_ui"  type="interbotix_calibration_rqt" ns="$(arg robot_name)" output="screen"/>
+
+</launch>

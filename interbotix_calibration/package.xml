@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>interbotix_calibration</name>
+  <version>0.0.0</version>
+  <description>The interbotix_calibration package</description>
+
+  <maintainer email="jelle@todo.todo">jelle</maintainer>
+
+  <license>Apache2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>gazebo_ros</build_depend>
+  <build_depend>message_generation</build_depend>
+  <build_export_depend>rospy</build_export_depend>
+  <build_export_depend>gazebo_ros</build_export_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
+  <exec_depend>message_generation</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>trajectory_msgs</exec_depend>
+  <exec_depend>control_msgs</exec_depend>
+  <exec_depend>moveit</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>realsense2_camera</exec_depend>
+  <exec_depend>realsense2_description</exec_depend>
+  <exec_depend>aruco_ros</exec_depend>
+  <exec_depend>usb_cam</exec_depend>
+  <exec_depend>gazebo_ros</exec_depend>
+  <exec_depend>usb_cam</exec_depend>
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!--  required for loading gazebo models from this package -->
+    <gazebo_ros gazebo_model_path="${prefix}/models" gazebo_media_path="${prefix}/models"/>
+  </export>
+</package>

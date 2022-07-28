@@ -1,0 +1,27 @@
+<robot name="camera" xmlns:xacro="http://ros.org/wiki/xacro">
+  <!-- import the camera -->
+  <xacro:include filename="$(find interbotix_calibration)/urdf/_webcam.urdf.xacro" />
+
+  <!-- camera params-->
+  <xacro:arg name="gazebo"                  default="false"/>
+  <xacro:arg name="camera_name"             default="camera"/>
+  <xacro:arg name="color_width"             default="1280"/>
+  <xacro:arg name="color_height"            default="720"/>
+
+  <xacro:property name="load_gazebo" value="$(arg gazebo)"/>
+
+  <link name="world"/>
+
+  <!-- camera -->
+  <xacro:camera parent="world" name="$(arg camera_name)"/>
+
+  <xacro:if value="${load_gazebo}">
+    <xacro:include filename="$(find interbotix_calibration)/urdf/webcam.gazebo.xacro" />
+
+    <xacro:my_camera
+      name="$(arg camera_name)"
+      color_width="$(arg color_width)"
+      color_height="$(arg color_height)"
+    />
+  </xacro:if>
+</robot>
