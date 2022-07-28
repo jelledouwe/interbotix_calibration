@@ -82,6 +82,7 @@ In the launch file interbotix_calibration.launch, select the correct arguments r
 - Your robot type, which are *robot_model*, *dof* and *joint_names*.  
 - **If using a Realsense device** set *use_realsense* to true and set *camera_description* to realsense_d435.urdf.xacro or realsense_d435.urdf.xacro, for the D435 or L515, respectively.
 - **If using a webcam** set *use_realsense* to false and set *video_device* and *camera_info_url* appropriately.
+- Also, don't forget to set the arguments related to the Aruco marker that you are using, i.e. *marker_size* and *marker_id*.
 
 Next, you can follow the instructions as stated above under *Calibration instructions*.
 Note that you can move the robot upwards, to home, to upright, or to sleep (from home position only!) by clicking on *up*, *home* *upright*, *sleep*, in the robot command GUI, respectively.
