@@ -55,6 +55,10 @@ You can verify this in the Rviz Image window.
 5. Next, click on *Add* in Rviz and select *HandEyeCalibration* from *moveit_calibration_gui* and click *Ok*:
 ![Add HandEyeCalibration](img/cal_2.png)
 6. Under the tab *Context* of  *HandEye Calibration* select the following frames:
+  - Sensor_frame: camera_color_optical_frame
+  - Object frame: marker_frame_filtered
+  - End-effector frame: [robot_model]/ee_arm_link
+  - Robot base frame: [robot_model]/base_link
 ![Select frames](img/cal_3.png)
 7. In the calibrate tab, click on *Take sample*.
 8. Move the robot to a new calibration pose by clicking on *Go to calibration pose* in the robot command GUI.
