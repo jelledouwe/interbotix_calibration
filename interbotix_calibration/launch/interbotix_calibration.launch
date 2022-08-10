@@ -226,7 +226,7 @@ or
     <param name="marker_frame"              value="$(arg marker_frame)" />
   </node>
 
-  # Start GUI
+  <!-- Start GUI -->
   <node pkg="interbotix_calibration_rqt" name="interbotix_calibration_ui"  type="interbotix_calibration_rqt" ns="$(arg robot_name)" output="screen"/>
 
 </launch>
