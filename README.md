@@ -21,7 +21,7 @@ git clone git@github.com:jelledouwe/interbotix_calibration.git
 ```
 3. Install ROS dependencies:
 ```bash
-cd ../..
+cd ..
 rosdep update
 rosdep install --from-paths src --ignore-src -r -y
 ```
