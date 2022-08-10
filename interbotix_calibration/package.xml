@@ -22,7 +22,9 @@
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>trajectory_msgs</exec_depend>
   <exec_depend>control_msgs</exec_depend>
-  <exec_depend>moveit</exec_depend>
+  <exec_depend>moveit_commander</exec_depend>
+  <exec_depend>moveit_core</exec_depend>
+  <exec_depend>moveit_msgs</exec_depend>
   <exec_depend>tf2_ros</exec_depend>
   <exec_depend>realsense2_camera</exec_depend>
   <exec_depend>realsense2_description</exec_depend>
