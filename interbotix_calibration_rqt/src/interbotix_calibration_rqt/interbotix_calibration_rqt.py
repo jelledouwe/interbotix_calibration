@@ -7,7 +7,7 @@ from qt_gui.plugin import Plugin
 from python_qt_binding import loadUi
 from python_qt_binding.QtWidgets import QWidget
 from std_msgs.msg import String
-from interbotix_xs_sdk.srv import TorqueEnable, TorqueEnableRequest
+from interbotix_xs_msgs.srv import TorqueEnable, TorqueEnableRequest
 
 
 def substitute_xml_args(param):
